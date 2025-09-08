@@ -1,0 +1,44 @@
+version: "3.8"
+services:
+  mongodb:
+    image: mongo:6
+    restart: unless-stopped
+    volumes:
+      - mongodb-data:/data/db
+    networks:
+      - mongo-go
+
+  app-back:
+    build:
+      context: ./contacts-resapi
+    image: local/contacts-resapi:latest
+    restart: unless-stopped
+    environment:
+      - TZ=UTC
+    depends_on:
+      - mongodb
+    networks:
+      - mongo-go
+      - nginx-go
+
+  nginx:
+    build:
+      context: ./nginx-http2
+    image: local/nginx-http2:latest
+    restart: unless-stopped
+    depends_on:
+      - app-back
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - nginx-go
+
+networks:
+  mongo-go: {}
+  nginx-go: {}
+
+volumes:
+  mongodb-data: {}
+
+
