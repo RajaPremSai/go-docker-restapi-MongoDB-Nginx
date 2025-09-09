@@ -16,8 +16,10 @@ RUN     openssl req 	-x509 -nodes \
 	&& apk del openssl \
 	&& rm -rf /var/cache/apk/* 
 COPY nginx.conf /etc/nginx/nginx.conf
+COPY conf/ /etc/nginx/conf.d/
+COPY www/ /var/www/
 COPY reload.sh /
-RUN chmod +x reload.sh
+RUN sed -i 's/\r$//' /reload.sh && chmod +x /reload.sh
 RUN mkdir -p /run/nginx
 EXPOSE 80 443
 CMD ["/reload.sh"]

@@ -1,0 +1,6 @@
+go.sum
+bin/
+vendor/
+.git
+Dockerfile
+
